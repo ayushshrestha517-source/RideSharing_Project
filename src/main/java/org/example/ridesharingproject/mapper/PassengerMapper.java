@@ -1,6 +1,6 @@
 package org.example.ridesharingproject.mapper;
 
-import org.example.ridesharingproject.dto.responsedto.PassengerResponseDto;
+import org.example.ridesharingproject.dto.response.PassengerResponseDto;
 import org.example.ridesharingproject.entity.Passenger;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

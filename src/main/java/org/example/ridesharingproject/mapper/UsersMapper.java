@@ -1,6 +1,6 @@
 package org.example.ridesharingproject.mapper;
 
-import org.example.ridesharingproject.dto.requestdto.SignupRequestDto;
+import org.example.ridesharingproject.dto.request.SignupRequestDto;
 import org.example.ridesharingproject.entity.Users;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
