@@ -28,6 +28,7 @@ public class Users {
 
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private String profileImage;
