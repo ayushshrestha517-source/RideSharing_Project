@@ -1,4 +1,4 @@
-package org.example.ridesharingproject.dto.requestdto;
+package org.example.ridesharingproject.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package org.example.ridesharingproject.dto.responsedto;
+package org.example.ridesharingproject.dto.response;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package org.example.ridesharingproject.dto.responsedto;
+package org.example.ridesharingproject.dto.response;
 
 public record PassengerResponseDto(
         Long id,

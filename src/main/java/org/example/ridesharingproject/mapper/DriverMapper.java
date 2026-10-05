@@ -1,7 +1,7 @@
 package org.example.ridesharingproject.mapper;
 
-import org.example.ridesharingproject.dto.requestdto.DriverRequestDto;
-import org.example.ridesharingproject.dto.responsedto.DriverResponseDto;
+import org.example.ridesharingproject.dto.request.DriverRequestDto;
+import org.example.ridesharingproject.dto.response.DriverResponseDto;
 import org.example.ridesharingproject.entity.Driver;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
