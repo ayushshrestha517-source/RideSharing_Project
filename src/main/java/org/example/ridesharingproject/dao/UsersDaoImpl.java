@@ -5,6 +5,8 @@ import org.example.ridesharingproject.dto.request.SignupRequestDto;
 import org.example.ridesharingproject.dto.response.SignupResponseDto;
 import org.example.ridesharingproject.entity.Role;
 import org.example.ridesharingproject.entity.Users;
+import org.example.ridesharingproject.exception.AlreadyExistsException;
+import org.example.ridesharingproject.exception.ResourceNotFoundException;
 import org.example.ridesharingproject.mapper.UsersMapper;
 import org.example.ridesharingproject.repository.RoleRepository;
 import org.example.ridesharingproject.repository.UsersRepository;
@@ -27,7 +29,7 @@ public class UsersDaoImpl implements UsersDao {
 
 
         if (usersRepository.findByUsername(dto.username()).isPresent()) {
-            throw new RuntimeException("Username already exists");
+            throw new AlreadyExistsException("Username already exists");
         }
 
         // Convert DTO to entity
@@ -39,9 +41,9 @@ public class UsersDaoImpl implements UsersDao {
         );
 
         // Find default role
-        Role role = roleRepository.findByName("ROLE_USER")
+        Role role = roleRepository.findByName("ROLE_PASSENGER")
                 .orElseThrow(() ->
-                        new RuntimeException("Role not found")
+                        new ResourceNotFoundException("Role not found")
                 );
 
 
