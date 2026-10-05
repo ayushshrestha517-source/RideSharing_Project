@@ -41,7 +41,7 @@ public class UsersDaoImpl implements UsersDao {
         );
 
         // Find default role
-        Role role = roleRepository.findByName("ROLE_PASSENGER")
+        Role role = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Role not found")
                 );
