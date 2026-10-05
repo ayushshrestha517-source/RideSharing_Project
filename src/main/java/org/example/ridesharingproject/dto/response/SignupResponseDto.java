@@ -8,7 +8,7 @@ public record SignupResponseDto(
         String lastName,
         String username,
         String email,
-        Gender gender,
+        String gender,
         String profileImage,
         String role
 ) {
