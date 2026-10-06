@@ -8,6 +8,7 @@ public record SignupResponseDto(
         String lastName,
         String username,
         String email,
+        String phoneNumber,
         String gender,
         String profileImage,
         String role
