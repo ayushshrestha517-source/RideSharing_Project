@@ -10,12 +10,15 @@ import java.time.LocalDate;
 public record DriverRequestDto(
 
         @NotBlank(message = "License number is required")
-        @Size(max = 50, message = "License number must not exceed 50 characters")
+        @Size(min = 5, max = 30, message = "License number must be between 5 and 30 characters")
         String licenseNumber,
 
         @NotNull(message = "License expiry date is required")
         @Future(message = "License expiry date must be in the future")
-        LocalDate licenseExpiryDate
+        LocalDate licenseExpiryDate,
+
+        @NotBlank(message = "License image is required")
+        String licenseImage
 
 ) {
 }
