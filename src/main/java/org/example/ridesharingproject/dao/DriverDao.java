@@ -6,5 +6,7 @@ import org.example.ridesharingproject.dto.response.DriverResponseDto;
 public interface DriverDao {
 
     DriverResponseDto applyAsDriver(DriverRequestDto dto);
+    DriverResponseDto approveDriver(Long driverId);
+
 
 }
