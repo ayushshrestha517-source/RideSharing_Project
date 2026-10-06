@@ -29,10 +29,10 @@ public class Driver {
 
     @Column(nullable = false)
     private String licenseImage;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DriverVerificationStatus verificationStatus = DriverVerificationStatus.PENDING;
-
 
     @Column(nullable = false)
     private Boolean active = false;

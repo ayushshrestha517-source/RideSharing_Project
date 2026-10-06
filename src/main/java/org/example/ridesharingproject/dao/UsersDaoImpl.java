@@ -97,7 +97,7 @@ public class UsersDaoImpl implements UsersDao {
 
         if (dto.role() == UserRole.PASSENGER) {
             Role passengerRole = roleRepository.findByName("ROLE_PASSENGER").orElseThrow(() -> new ResourceNotFoundException("Passenger role not found"));
-            user.setRoles(new HashSet<>());
+
             user.getRoles().add(passengerRole);
             usersRepository.save(user);
 
@@ -109,10 +109,6 @@ public class UsersDaoImpl implements UsersDao {
         }
 
         if (dto.role() == UserRole.DRIVER) {
-
-            // Don't assign ROLE_DRIVER yet.
-            // Create driver application here.
-
             return new SelectRoleResponseDto(
                     "DRIVER_APPLICATION",
                     "Please submit your driver documents."
