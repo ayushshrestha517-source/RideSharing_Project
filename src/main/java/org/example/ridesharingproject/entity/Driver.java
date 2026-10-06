@@ -3,6 +3,7 @@ package org.example.ridesharingproject.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.ridesharingproject.util.DriverVerificationStatus;
 
 import java.time.LocalDate;
 
@@ -27,10 +28,14 @@ public class Driver {
     private LocalDate licenseExpiryDate;
 
     @Column(nullable = false)
-    private Boolean licenseVerified = false;
+    private String licenseImage;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DriverVerificationStatus verificationStatus = DriverVerificationStatus.PENDING;
+
 
     @Column(nullable = false)
-    private Boolean active = true;
+    private Boolean active = false;
 
     @Column(nullable = false)
     private Boolean online = false;
