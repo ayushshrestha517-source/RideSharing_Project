@@ -1,7 +1,9 @@
 package org.example.ridesharingproject.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.ridesharingproject.dao.PassengerDao;
+import org.example.ridesharingproject.dto.request.PassengerProfileUpdateRequestDto;
 import org.example.ridesharingproject.dto.response.PassengerResponseDto;
 import org.example.ridesharingproject.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -33,5 +35,11 @@ public class PassengerController {
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<PassengerResponseDto>> getMyProfile() {
         return ResponseEntity.ok(ApiResponse.success(passengerDao.getMyProfile(), "Passenger profile retrieved successfully."));
+    }
+
+    @PreAuthorize("hasRole('PASSENGER')")
+    @PatchMapping("/update-profile")
+    public ResponseEntity<ApiResponse<PassengerResponseDto>> updateMyProfile(@Valid @RequestBody PassengerProfileUpdateRequestDto dto) {
+        return ResponseEntity.ok(ApiResponse.success(passengerDao.updateMyProfile(dto), "Passenger profile updated successfully."));
     }
 }
