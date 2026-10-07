@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.ridesharingproject.dto.response.PassengerResponseDto;
 import org.example.ridesharingproject.entity.Passenger;
 import org.example.ridesharingproject.repository.PassengerRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,15 +17,8 @@ public class PassengerDaoImpl implements PassengerDao {
 
     @Override
     public PassengerResponseDto getPassengerById(Long id) {
-
-        Passenger passenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Passenger not found with id: " + id));
-
-        return new PassengerResponseDto(
-                passenger.getId(),
-                passenger.getUser().getId(),
-                passenger.getActive()
-        );
+        Passenger passenger = passengerRepository.findById(id).orElseThrow(() -> new RuntimeException("Passenger not found with id: " + id));
+        return new PassengerResponseDto(passenger.getId(), passenger.getUser().getId(), passenger.getActive());
     }
 
     @Override
@@ -37,6 +31,19 @@ public class PassengerDaoImpl implements PassengerDao {
                         passenger.getActive()
                 ))
                 .toList();
+    }
+
+    @Override
+    public PassengerResponseDto getMyProfile() {
+
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        Passenger passenger = passengerRepository.findByUserUsername(username).orElseThrow(() -> new RuntimeException("Passenger not found"));
+
+        return new PassengerResponseDto(passenger.getId(), passenger.getUser().getId(), passenger.getActive());
     }
 }
 

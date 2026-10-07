@@ -7,4 +7,5 @@ import java.util.List;
 public interface PassengerDao {
     PassengerResponseDto getPassengerById(Long id);
     List<PassengerResponseDto> getAllPassengers();
+    PassengerResponseDto getMyProfile();
 }

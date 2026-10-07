@@ -15,17 +15,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/emergency-contacts")
+@PreAuthorize("hasRole('PASSENGER')")
 @RequiredArgsConstructor
 public class EmergencyContactController {
 
     private final EmergencyContactDao emergencyContactDao;
-    @PreAuthorize("hasRole('PASSENGER')")
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<EmergencyContactResponseDto>> createEmergencyContact(@Valid @RequestBody EmergencyContactRequestDto dto) {
         return ResponseEntity.ok(ApiResponse.success(emergencyContactDao.createEmergencyContact(dto),"Emergency contact assigned successfully"));
     }
 
-    @PreAuthorize("hasRole('PASSENGER')")
     @GetMapping("/get")
     public ResponseEntity<ApiResponse<List<EmergencyContactResponseDto>>> getMyEmergencyContacts() {
         return ResponseEntity.ok(ApiResponse.success(emergencyContactDao.getMyEmergencyContacts(), "Emergency contacts retrieved successfully."));
