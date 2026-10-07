@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.example.ridesharingproject.dto.request.PassengerProfileUpdateRequestDto;
 import org.example.ridesharingproject.dto.response.PassengerResponseDto;
 import org.example.ridesharingproject.entity.Passenger;
+import org.example.ridesharingproject.exception.ResourceNotFoundException;
 import org.example.ridesharingproject.repository.PassengerRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,17 +20,38 @@ public class PassengerDaoImpl implements PassengerDao {
 
     @Override
     public PassengerResponseDto getPassengerById(Long id) {
-        Passenger passenger = passengerRepository.findById(id).orElseThrow(() -> new RuntimeException("Passenger not found with id: " + id));
-        return new PassengerResponseDto(passenger.getId(), passenger.getUser().getId(), passenger.getActive());
+
+        Passenger passenger = passengerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Passenger not found with id: " + id));
+
+        return new PassengerResponseDto(
+                passenger.getId(),
+                passenger.getUser().getId(),
+                passenger.getUser().getFirstName(),
+                passenger.getUser().getLastName(),
+                passenger.getUser().getUsername(),
+                passenger.getUser().getEmail(),
+                passenger.getUser().getPhoneNumber(),
+                passenger.getUser().getGender(),
+                passenger.getUser().getProfileImage(),
+                passenger.getActive()
+        );
     }
 
     @Override
     public List<PassengerResponseDto> getAllPassengers() {
+
         return passengerRepository.findAll()
                 .stream()
                 .map(passenger -> new PassengerResponseDto(
                         passenger.getId(),
                         passenger.getUser().getId(),
+                        passenger.getUser().getFirstName(),
+                        passenger.getUser().getLastName(),
+                        passenger.getUser().getUsername(),
+                        passenger.getUser().getEmail(),
+                        passenger.getUser().getPhoneNumber(),
+                        passenger.getUser().getGender(),
+                        passenger.getUser().getProfileImage(),
                         passenger.getActive()
                 ))
                 .toList();
@@ -43,9 +65,20 @@ public class PassengerDaoImpl implements PassengerDao {
                 .getAuthentication()
                 .getName();
 
-        Passenger passenger = passengerRepository.findByUserUsername(username).orElseThrow(() -> new RuntimeException("Passenger not found"));
+        Passenger passenger = passengerRepository.findByUserUsername(username).orElseThrow(() -> new ResourceNotFoundException("Passenger not found"));
 
-        return new PassengerResponseDto(passenger.getId(), passenger.getUser().getId(), passenger.getActive());
+        return new PassengerResponseDto(
+                passenger.getId(),
+                passenger.getUser().getId(),
+                passenger.getUser().getFirstName(),
+                passenger.getUser().getLastName(),
+                passenger.getUser().getUsername(),
+                passenger.getUser().getEmail(),
+                passenger.getUser().getPhoneNumber(),
+                passenger.getUser().getGender(),
+                passenger.getUser().getProfileImage(),
+                passenger.getActive()
+        );
     }
 
     @Transactional
@@ -80,7 +113,19 @@ public class PassengerDaoImpl implements PassengerDao {
         }
 
         passengerRepository.save(passenger);
-        return new PassengerResponseDto(passenger.getId(), passenger.getUser().getId(), passenger.getActive());
+
+        return new PassengerResponseDto(
+                passenger.getId(),
+                passenger.getUser().getId(),
+                passenger.getUser().getFirstName(),
+                passenger.getUser().getLastName(),
+                passenger.getUser().getUsername(),
+                passenger.getUser().getEmail(),
+                passenger.getUser().getPhoneNumber(),
+                passenger.getUser().getGender(),
+                passenger.getUser().getProfileImage(),
+                passenger.getActive()
+        );
     }
 }
 
