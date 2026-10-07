@@ -33,23 +33,18 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public DriverResponseDto applyAsDriver(DriverRequestDto dto) {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
 
-        Users user = usersRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (driverRepository.existsByUserId(user.getId())) {
-            throw new AlreadyExistsException(
-                    "You have already submitted a driver application");
+            throw new AlreadyExistsException("You have already submitted a driver application");
         }
 
         if (driverRepository.existsByLicenseNumber(dto.licenseNumber())) {
-            throw new AlreadyExistsException(
-                    "License number already exists");
+            throw new AlreadyExistsException("License number already exists");
         }
 
         Driver driver = driverMapper.toEntity(dto);
@@ -68,18 +63,13 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public DriverResponseDto approveDriver(Long driverId) {
 
-        Driver driver = driverRepository.findById(driverId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Driver not found"));
+        Driver driver = driverRepository.findById(driverId).orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
         if (driver.getVerificationStatus() != DriverVerificationStatus.PENDING) {
-            throw new BadRequestException(
-                    "Only pending driver applications can be approved");
+            throw new BadRequestException("Only pending driver applications can be approved");
         }
 
-        Role driverRole = roleRepository.findByName("ROLE_DRIVER")
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Driver role not found"));
+        Role driverRole = roleRepository.findByName("ROLE_DRIVER").orElseThrow(() -> new ResourceNotFoundException("Driver role not found"));
 
         Users user = driver.getUser();
 
