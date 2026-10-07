@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -15,8 +18,20 @@ public class Passenger {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(
+            name = "user_id",
+            nullable = false,
+            unique = true
+    )
     private Users user;
 
+    @Column(nullable = false)
     private Boolean active = true;
+
+    @OneToMany(
+            mappedBy = "passenger",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<EmergencyContact> emergencyContacts = new HashSet<>();
 }
