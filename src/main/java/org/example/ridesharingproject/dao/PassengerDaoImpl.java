@@ -90,7 +90,7 @@ public class PassengerDaoImpl implements PassengerDao {
                 .getAuthentication()
                 .getName();
 
-        Passenger passenger = passengerRepository.findByUserUsername(username).orElseThrow(() -> new RuntimeException("Passenger not found"));
+        Passenger passenger = passengerRepository.findByUserUsername(username).orElseThrow(() -> new ResourceNotFoundException("Passenger not found"));
 
         if (dto.firstName() != null) {
             passenger.getUser().setFirstName(dto.firstName());
