@@ -1,6 +1,8 @@
 package org.example.ridesharingproject.dao;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.example.ridesharingproject.dto.request.PassengerProfileUpdateRequestDto;
 import org.example.ridesharingproject.dto.response.PassengerResponseDto;
 import org.example.ridesharingproject.entity.Passenger;
 import org.example.ridesharingproject.repository.PassengerRepository;
@@ -43,6 +45,41 @@ public class PassengerDaoImpl implements PassengerDao {
 
         Passenger passenger = passengerRepository.findByUserUsername(username).orElseThrow(() -> new RuntimeException("Passenger not found"));
 
+        return new PassengerResponseDto(passenger.getId(), passenger.getUser().getId(), passenger.getActive());
+    }
+
+    @Transactional
+    @Override
+    public PassengerResponseDto updateMyProfile(PassengerProfileUpdateRequestDto dto) {
+
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        Passenger passenger = passengerRepository.findByUserUsername(username).orElseThrow(() -> new RuntimeException("Passenger not found"));
+
+        if (dto.firstName() != null) {
+            passenger.getUser().setFirstName(dto.firstName());
+        }
+
+        if (dto.lastName() != null) {
+            passenger.getUser().setLastName(dto.lastName());
+        }
+
+        if (dto.phoneNumber() != null) {
+            passenger.getUser().setPhoneNumber(dto.phoneNumber());
+        }
+
+        if (dto.gender() != null) {
+            passenger.getUser().setGender(dto.gender());
+        }
+
+        if (dto.profileImage() != null) {
+            passenger.getUser().setProfileImage(dto.profileImage());
+        }
+
+        passengerRepository.save(passenger);
         return new PassengerResponseDto(passenger.getId(), passenger.getUser().getId(), passenger.getActive());
     }
 }
