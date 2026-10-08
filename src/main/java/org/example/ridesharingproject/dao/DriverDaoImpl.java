@@ -14,7 +14,7 @@ import org.example.ridesharingproject.mapper.DriverMapper;
 import org.example.ridesharingproject.repository.DriverRepository;
 import org.example.ridesharingproject.repository.RoleRepository;
 import org.example.ridesharingproject.repository.UsersRepository;
-import org.example.ridesharingproject.util.DriverVerificationStatus;
+import org.example.ridesharingproject.enums.DriverVerificationStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -104,13 +104,10 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public DriverResponseDto rejectDriver(Long driverId) {
 
-        Driver driver = driverRepository.findById(driverId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Driver not found"));
+        Driver driver = driverRepository.findById(driverId).orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
         if (driver.getVerificationStatus() != DriverVerificationStatus.PENDING) {
-            throw new BadRequestException(
-                    "Only pending driver applications can be rejected");
+            throw new BadRequestException("Only pending driver applications can be rejected");
         }
 
         driver.setVerificationStatus(DriverVerificationStatus.REJECTED);
@@ -125,39 +122,26 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public DriverResponseDto resubmitDriver(DriverRequestDto dto) {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
 
-        Users user = usersRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Driver driver = driverRepository.findByUserId(user.getId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Driver application not found"));
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver application not found"));
 
         if (driver.getVerificationStatus() != DriverVerificationStatus.REJECTED) {
-            throw new BadRequestException(
-                    "Only rejected driver applications can be resubmitted");
+            throw new BadRequestException("Only rejected driver applications can be resubmitted");
         }
 
         // Check whether the new license number belongs to another driver
-        if (!driver.getLicenseNumber().equals(dto.licenseNumber())
-                && driverRepository.existsByLicenseNumber(dto.licenseNumber())) {
-
-            throw new AlreadyExistsException(
-                    "License number already exists");
+        if (!driver.getLicenseNumber().equals(dto.licenseNumber()) && driverRepository.existsByLicenseNumber(dto.licenseNumber())) {
+            throw new AlreadyExistsException("License number already exists");
         }
 
         // Check whether the new vehicle number belongs to another driver
-        if (!driver.getVehicleNumber().equals(dto.vehicleNumber())
-                && driverRepository.existsByVehicleNumber(dto.vehicleNumber())) {
-
-            throw new AlreadyExistsException(
-                    "Vehicle number already exists");
+        if (!driver.getVehicleNumber().equals(dto.vehicleNumber()) && driverRepository.existsByVehicleNumber(dto.vehicleNumber())) {
+            throw new AlreadyExistsException("Vehicle number already exists");
         }
 
         driver.setLicenseNumber(dto.licenseNumber());
@@ -182,10 +166,7 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public List<DriverResponseDto> getPendingDrivers() {
 
-        List<Driver> drivers =
-                driverRepository.findByVerificationStatus(
-                        DriverVerificationStatus.PENDING
-                );
+        List<Driver> drivers = driverRepository.findByVerificationStatus(DriverVerificationStatus.PENDING);
 
         return drivers.stream()
                 .map(driverMapper::toResponse)
@@ -195,35 +176,24 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public DriverResponseDto goOnline() {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
 
-        Users user = usersRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Driver driver = driverRepository.findByUserId(user.getId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Driver application not found"));
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver application not found"));
 
-        if (driver.getVerificationStatus()
-                != DriverVerificationStatus.APPROVED) {
-
-            throw new BadRequestException(
-                    "Only approved drivers can go online");
+        if (driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
+            throw new BadRequestException("Only approved drivers can go online");
         }
 
         if (!driver.getActive()) {
-            throw new BadRequestException(
-                    "Driver account is not active");
+            throw new BadRequestException("Driver account is not active");
         }
 
         if (driver.getLicenseExpiryDate().isBefore(LocalDate.now())) {
-            throw new BadRequestException(
-                    "Your driving license has expired");
+            throw new BadRequestException("Your driving license has expired");
         }
 
         driver.setOnline(true);
@@ -236,19 +206,13 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public DriverResponseDto goOffline() {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
 
-        Users user = usersRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Driver driver = driverRepository.findByUserId(user.getId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Driver application not found"));
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver application not found"));
 
         driver.setOnline(false);
 
@@ -260,14 +224,7 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public DriverResponseDto getApprovedDriverById(Long driverId) {
 
-        Driver driver = driverRepository
-                .findByIdAndVerificationStatus(
-                        driverId,
-                        DriverVerificationStatus.APPROVED
-                )
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Approved driver not found"));
+        Driver driver = driverRepository.findByIdAndVerificationStatus(driverId, DriverVerificationStatus.APPROVED).orElseThrow(() -> new ResourceNotFoundException("Approved driver not found"));
 
         return driverMapper.toResponse(driver);
     }
@@ -275,10 +232,7 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public List<DriverResponseDto> getApprovedDrivers() {
 
-        List<Driver> drivers =
-                driverRepository.findByVerificationStatus(
-                        DriverVerificationStatus.APPROVED
-                );
+        List<Driver> drivers = driverRepository.findByVerificationStatus(DriverVerificationStatus.APPROVED);
 
         return drivers.stream()
                 .map(driverMapper::toResponse)
@@ -289,15 +243,10 @@ public class DriverDaoImpl implements DriverDao {
     @Transactional
     public DriverResponseDto removeDriver(Long driverId) {
 
-        Driver driver = driverRepository.findById(driverId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Driver not found"));
+        Driver driver = driverRepository.findById(driverId).orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-        if (driver.getVerificationStatus()
-                != DriverVerificationStatus.APPROVED) {
-
-            throw new BadRequestException(
-                    "Only approved drivers can be removed");
+        if (driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
+            throw new BadRequestException("Only approved drivers can be removed");
         }
 
         driver.setActive(false);

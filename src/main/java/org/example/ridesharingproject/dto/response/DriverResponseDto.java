@@ -1,7 +1,7 @@
 package org.example.ridesharingproject.dto.response;
 
-import org.example.ridesharingproject.util.DriverVerificationStatus;
-import org.example.ridesharingproject.util.VehicleType;
+import org.example.ridesharingproject.enums.DriverVerificationStatus;
+import org.example.ridesharingproject.enums.VehicleType;
 
 import java.time.LocalDate;
 

@@ -1,6 +1,6 @@
 package org.example.ridesharingproject.dto.response;
 
-import org.example.ridesharingproject.util.Gender;
+import org.example.ridesharingproject.enums.Gender;
 
 public record PassengerResponseDto(
         Long id,
