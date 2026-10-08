@@ -6,7 +6,6 @@ import org.example.ridesharingproject.dto.response.DriverResponseDto;
 import java.util.List;
 
 public interface DriverDao {
-
     DriverResponseDto applyAsDriver(DriverRequestDto dto);
     DriverResponseDto approveDriver(Long driverId);
     DriverResponseDto rejectDriver(Long driverId);
@@ -17,6 +16,5 @@ public interface DriverDao {
     DriverResponseDto getApprovedDriverById(Long driverId);
     List<DriverResponseDto> getApprovedDrivers();
     DriverResponseDto removeDriver(Long driverId);
-
 
 }

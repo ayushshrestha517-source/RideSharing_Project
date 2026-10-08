@@ -7,12 +7,14 @@ import org.example.ridesharingproject.dto.request.SignupRequestDto;
 import org.example.ridesharingproject.dto.response.LoginResponseDto;
 import org.example.ridesharingproject.dto.response.SelectRoleResponseDto;
 import org.example.ridesharingproject.dto.response.SignupResponseDto;
+import org.example.ridesharingproject.entity.Passenger;
 import org.example.ridesharingproject.entity.Role;
 import org.example.ridesharingproject.entity.Users;
 import org.example.ridesharingproject.exception.AlreadyExistsException;
 import org.example.ridesharingproject.exception.BadRequestException;
 import org.example.ridesharingproject.exception.ResourceNotFoundException;
 import org.example.ridesharingproject.mapper.UsersMapper;
+import org.example.ridesharingproject.repository.PassengerRepository;
 import org.example.ridesharingproject.repository.RoleRepository;
 import org.example.ridesharingproject.repository.UsersRepository;
 import org.example.ridesharingproject.util.JwtUtil;
@@ -35,6 +37,7 @@ public class UsersDaoImpl implements UsersDao {
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
     private final RoleRepository roleRepository;
+    private final PassengerRepository passengerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -58,6 +61,18 @@ public class UsersDaoImpl implements UsersDao {
         user.setRoles(new HashSet<>());
         user.getRoles().add(role);
         Users savedUser = usersRepository.save(user);
+
+
+        if (passengerRepository.existsByUserId(user.getId())) {
+            throw new AlreadyExistsException("Passenger profile already exists");
+        }
+
+        Passenger passenger = new Passenger();
+        passenger.setUser(user);
+        passenger.setActive(true);
+
+        passengerRepository.save(passenger);
+
         return usersMapper.toResponse(savedUser);
     }
 
@@ -97,7 +112,7 @@ public class UsersDaoImpl implements UsersDao {
 
         if (dto.role() == UserRole.PASSENGER) {
             Role passengerRole = roleRepository.findByName("ROLE_PASSENGER").orElseThrow(() -> new ResourceNotFoundException("Passenger role not found"));
-            user.setRoles(new HashSet<>());
+
             user.getRoles().add(passengerRole);
             usersRepository.save(user);
 
@@ -109,10 +124,6 @@ public class UsersDaoImpl implements UsersDao {
         }
 
         if (dto.role() == UserRole.DRIVER) {
-
-            // Don't assign ROLE_DRIVER yet.
-            // Create driver application here.
-
             return new SelectRoleResponseDto(
                     "DRIVER_APPLICATION",
                     "Please submit your driver documents."
