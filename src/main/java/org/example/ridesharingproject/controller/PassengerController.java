@@ -23,7 +23,7 @@ public class PassengerController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getbyid/{id}")
     public ResponseEntity<ApiResponse<PassengerResponseDto>> getPassengerById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(passengerDao.getPassengerById(id), "Passenger retrieved successfully."));
+        return ResponseEntity.ok(ApiResponse.success(passengerDao.getPassengerById(id), "Passenger of entered id "+ id + " retrieved successfully."));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
