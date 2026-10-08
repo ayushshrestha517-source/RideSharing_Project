@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/driver")
 @RequiredArgsConstructor
@@ -26,5 +28,100 @@ public class DriverController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<DriverResponseDto>> approveDriver(@PathVariable Long driverId) {
         return ResponseEntity.ok(ApiResponse.success(driverDao.approveDriver(driverId), "Driver approved successfully."));
+    }
+
+    @PutMapping("/admin/reject/{driverId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<DriverResponseDto>> rejectDriver(
+            @PathVariable Long driverId) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        driverDao.rejectDriver(driverId),
+                        "Driver rejected successfully."
+                )
+        );
+    }
+
+    @PutMapping("/resubmit")
+    public ResponseEntity<ApiResponse<DriverResponseDto>> resubmitDriver(
+            @Valid @RequestBody DriverRequestDto dto) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        driverDao.resubmitDriver(dto),
+                        "Driver application resubmitted successfully."
+                )
+        );
+    }
+
+    @GetMapping("/admin/pending")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<DriverResponseDto>>> getPendingDrivers() {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        driverDao.getPendingDrivers(),
+                        "Pending driver applications retrieved successfully."
+                )
+        );
+    }
+
+    @PutMapping("/go-online")
+    public ResponseEntity<ApiResponse<DriverResponseDto>> goOnline() {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        driverDao.goOnline(),
+                        "Driver is now online."
+                )
+        );
+    }
+
+    @PutMapping("/go-offline")
+    public ResponseEntity<ApiResponse<DriverResponseDto>> goOffline() {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        driverDao.goOffline(),
+                        "Driver is now offline."
+                )
+        );
+    }
+
+    @GetMapping("/approved/{driverId}")
+    public ResponseEntity<ApiResponse<DriverResponseDto>> getApprovedDriverById(
+            @PathVariable Long driverId) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        driverDao.getApprovedDriverById(driverId),
+                        "Approved driver retrieved successfully."
+                )
+        );
+    }
+
+    @GetMapping("/approved")
+    public ResponseEntity<ApiResponse<List<DriverResponseDto>>> getApprovedDrivers() {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        driverDao.getApprovedDrivers(),
+                        "Approved drivers retrieved successfully."
+                )
+        );
+    }
+
+    @PutMapping("/admin/remove/{driverId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<DriverResponseDto>> removeDriver(
+            @PathVariable Long driverId) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        driverDao.removeDriver(driverId),
+                        "Driver removed successfully."
+                )
+        );
     }
 }
