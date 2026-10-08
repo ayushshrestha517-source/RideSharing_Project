@@ -6,6 +6,7 @@ import org.example.ridesharingproject.dao.PassengerDao;
 import org.example.ridesharingproject.dto.request.PassengerProfileUpdateRequestDto;
 import org.example.ridesharingproject.dto.response.PassengerResponseDto;
 import org.example.ridesharingproject.dto.response.ApiResponse;
+import org.example.ridesharingproject.entity.Passenger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -41,5 +42,11 @@ public class PassengerController {
     @PatchMapping("/update-profile")
     public ResponseEntity<ApiResponse<PassengerResponseDto>> updateMyProfile(@Valid @RequestBody PassengerProfileUpdateRequestDto dto) {
         return ResponseEntity.ok(ApiResponse.success(passengerDao.updateMyProfile(dto), "Passenger profile updated successfully."));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getbyuserid/{userId}")
+    public ResponseEntity<ApiResponse<Passenger>> getPassengerByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(ApiResponse.success(passengerDao.getPassengerByUserId(userId),"Passenger retrieved successfully."));
     }
 }
