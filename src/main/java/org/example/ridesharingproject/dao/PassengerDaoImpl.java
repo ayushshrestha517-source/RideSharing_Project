@@ -127,5 +127,10 @@ public class PassengerDaoImpl implements PassengerDao {
                 passenger.getActive()
         );
     }
+
+    @Override
+    public Passenger getPassengerByUserId(Long userId) {
+        return passengerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Passenger not found"));
+    }
 }
 
