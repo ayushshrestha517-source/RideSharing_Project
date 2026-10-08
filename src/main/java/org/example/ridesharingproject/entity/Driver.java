@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.ridesharingproject.util.DriverVerificationStatus;
+import org.example.ridesharingproject.util.VehicleType;
 
 import java.time.LocalDate;
 
@@ -29,10 +30,31 @@ public class Driver {
 
     @Column(nullable = false)
     private String licenseImage;
+
+    // Vehicle details
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private DriverVerificationStatus verificationStatus = DriverVerificationStatus.PENDING;
+    private VehicleType vehicleType;
 
+    @Column(nullable = false, unique = true)
+    private String vehicleNumber;
+
+    @Column(nullable = false)
+    private String vehicleModel;
+
+    @Column(nullable = false)
+    private String vehicleColour;
+
+    @Column(nullable = false)
+    private String blueBook;
+
+    // Driver verification details
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DriverVerificationStatus verificationStatus =
+            DriverVerificationStatus.PENDING;
 
     @Column(nullable = false)
     private Boolean active = false;
