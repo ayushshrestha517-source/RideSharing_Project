@@ -47,6 +47,6 @@ public class PassengerController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getbyuserid/{userId}")
     public ResponseEntity<ApiResponse<Passenger>> getPassengerByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(ApiResponse.success(passengerDao.getPassengerByUserId(userId),"Passenger retrieved successfully."));
+        return ResponseEntity.ok(ApiResponse.success(passengerDao.getPassengerByUserId(userId),"Passenger of entered user id "+ userId +" retrieved successfully."));
     }
 }
