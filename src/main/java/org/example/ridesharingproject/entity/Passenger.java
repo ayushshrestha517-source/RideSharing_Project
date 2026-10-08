@@ -35,3 +35,4 @@ public class Passenger {
     )
     private Set<EmergencyContact> emergencyContacts = new HashSet<>();
 }
+
