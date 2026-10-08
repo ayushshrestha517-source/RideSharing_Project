@@ -21,5 +21,4 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
 
     Optional<Driver> findByIdAndVerificationStatus(Long id, DriverVerificationStatus verificationStatus);
 
-
 }
