@@ -129,8 +129,8 @@ public class PassengerDaoImpl implements PassengerDao {
     }
 
     @Override
-    public Passenger getPassengerByUserId(Long userId) {
-        return passengerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Passenger not found"));
+    public Passenger getPassengerByUserId(Long userId){
+        return passengerRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("Passenger not found for user id: " + userId));
     }
 }
 
