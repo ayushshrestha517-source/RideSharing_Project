@@ -1,7 +1,7 @@
 package org.example.ridesharingproject.repository;
 
 import org.example.ridesharingproject.entity.Driver;
-import org.example.ridesharingproject.util.DriverVerificationStatus;
+import org.example.ridesharingproject.enums.DriverVerificationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

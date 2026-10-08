@@ -2,7 +2,7 @@ package org.example.ridesharingproject.dto.request;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import org.example.ridesharingproject.util.Gender;
+import org.example.ridesharingproject.enums.Gender;
 
 public record PassengerProfileUpdateRequestDto(
 

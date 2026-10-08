@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.ridesharingproject.util.Gender;
+import org.example.ridesharingproject.enums.Gender;
 
 import java.util.Set;
 

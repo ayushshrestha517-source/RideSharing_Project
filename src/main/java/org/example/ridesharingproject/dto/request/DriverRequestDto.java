@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.example.ridesharingproject.util.VehicleType;
+import org.example.ridesharingproject.enums.VehicleType;
 
 import java.time.LocalDate;
 
