@@ -30,5 +30,14 @@ public class RideController {
     public ResponseEntity<ApiResponse<List<RideResponseDto>>> getRequestedRides(){
         return ResponseEntity.ok(ApiResponse.success(rideDao.getRequestedRides(),"Available Rides retrieved successfully."));
     }
+
+    @PutMapping("/{rideId}/accept")
+    public ResponseEntity<RideResponseDto> acceptRide(
+            @PathVariable Long rideId) {
+
+        RideResponseDto response = rideDao.acceptRide(rideId);
+
+        return ResponseEntity.ok(response);
+    }
 }
 
