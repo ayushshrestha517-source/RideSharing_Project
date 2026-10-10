@@ -31,13 +31,10 @@ public class RideController {
         return ResponseEntity.ok(ApiResponse.success(rideDao.getRequestedRides(),"Available Rides retrieved successfully."));
     }
 
-    @PutMapping("/{rideId}/accept")
-    public ResponseEntity<RideResponseDto> acceptRide(
-            @PathVariable Long rideId) {
-
-        RideResponseDto response = rideDao.acceptRide(rideId);
-
-        return ResponseEntity.ok(response);
+    @PreAuthorize("hasRole('DRIVER')")
+    @PutMapping("/accept/{rideId}")
+    public ResponseEntity<ApiResponse<RideResponseDto>> acceptRide(@PathVariable Long rideId) {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.acceptRide(rideId),"Ride accepted successfully."));
     }
 }
 
