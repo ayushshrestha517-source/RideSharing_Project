@@ -3,6 +3,9 @@ package org.example.ridesharingproject.dao;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
 
+import java.util.List;
+
 public interface RideDao {
     RideResponseDto requestRide(RideRequestDto dto);
+    List<RideResponseDto> getRequestedRides();
 }
