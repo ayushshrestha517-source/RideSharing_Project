@@ -3,13 +3,16 @@ package org.example.ridesharingproject.dao;
 import lombok.RequiredArgsConstructor;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
+import org.example.ridesharingproject.entity.Driver;
 import org.example.ridesharingproject.entity.Passenger;
 import org.example.ridesharingproject.entity.Ride;
 import org.example.ridesharingproject.entity.Users;
+import org.example.ridesharingproject.enums.DriverVerificationStatus;
 import org.example.ridesharingproject.enums.RideStatus;
 import org.example.ridesharingproject.exception.BadRequestException;
 import org.example.ridesharingproject.exception.ResourceNotFoundException;
 import org.example.ridesharingproject.mapper.RideMapper;
+import org.example.ridesharingproject.repository.DriverRepository;
 import org.example.ridesharingproject.repository.PassengerRepository;
 import org.example.ridesharingproject.repository.RideRepository;
 import org.example.ridesharingproject.repository.UsersRepository;
@@ -28,6 +31,7 @@ public class RideDaoImpl implements RideDao {
     private final RideRepository rideRepository;
     private final PassengerRepository passengerRepository;
     private final UsersRepository usersRepository;
+    private final DriverRepository driverRepository;
     private final RideMapper rideMapper;
 
     @Override
@@ -63,6 +67,36 @@ public class RideDaoImpl implements RideDao {
                 .stream()
                 .map(rideMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public RideResponseDto acceptRide(Long rideId) {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Driver profile not found"));
+
+        if (!driver.getActive() || !driver.getOnline() || driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
+            throw new RuntimeException("Only approved, active, online drivers can accept rides");
+        }
+
+        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new RuntimeException("Ride not found"));
+
+        if (ride.getStatus() != RideStatus.REQUESTED) {
+            throw new RuntimeException("This ride is no longer available");
+        }
+
+        ride.setDriver(driver);
+        ride.setStatus(RideStatus.ACCEPTED);
+
+        Ride savedRide = rideRepository.save(ride);
+
+        return rideMapper.toResponse(savedRide);
     }
 
     private void validateCoordinates(RideRequestDto dto) {

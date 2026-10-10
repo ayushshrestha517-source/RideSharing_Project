@@ -8,4 +8,5 @@ import java.util.List;
 public interface RideDao {
     RideResponseDto requestRide(RideRequestDto dto);
     List<RideResponseDto> getRequestedRides();
+    RideResponseDto acceptRide(Long rideId);
 }

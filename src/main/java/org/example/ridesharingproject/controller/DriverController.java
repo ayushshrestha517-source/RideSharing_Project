@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/driver")
+@RequestMapping("/driver")
 @RequiredArgsConstructor
 public class DriverController {
 
@@ -24,14 +24,14 @@ public class DriverController {
         return ResponseEntity.ok(ApiResponse.success(driverDao.applyAsDriver(dto), "Driver application submitted successfully."));
     }
 
-    @PutMapping("/admin/approve/{driverId}")
     @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/approve/{driverId}")
     public ResponseEntity<ApiResponse<DriverResponseDto>> approveDriver(@PathVariable Long driverId) {
         return ResponseEntity.ok(ApiResponse.success(driverDao.approveDriver(driverId), "Driver approved successfully."));
     }
 
-    @PutMapping("/admin/reject/{driverId}")
     @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/reject/{driverId}")
     public ResponseEntity<ApiResponse<DriverResponseDto>> rejectDriver(@PathVariable Long driverId) {
         return ResponseEntity.ok(ApiResponse.success(driverDao.rejectDriver(driverId), "Driver rejected successfully."));
     }
@@ -41,8 +41,8 @@ public class DriverController {
         return ResponseEntity.ok(ApiResponse.success(driverDao.resubmitDriver(dto), "Driver application resubmitted successfully."));
     }
 
-    @GetMapping("/admin/pending")
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/pending")
     public ResponseEntity<ApiResponse<List<DriverResponseDto>>> getPendingDrivers() {
         return ResponseEntity.ok(ApiResponse.success(driverDao.getPendingDrivers(), "Pending driver applications retrieved successfully."));
     }
@@ -67,8 +67,8 @@ public class DriverController {
         return ResponseEntity.ok(ApiResponse.success(driverDao.getApprovedDrivers(), "Approved drivers retrieved successfully."));
     }
 
-    @PutMapping("/admin/remove/{driverId}")
     @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/remove/{driverId}")
     public ResponseEntity<ApiResponse<DriverResponseDto>> removeDriver(@PathVariable Long driverId) {
         return ResponseEntity.ok(ApiResponse.success(driverDao.removeDriver(driverId), "Driver removed successfully."));
     }
