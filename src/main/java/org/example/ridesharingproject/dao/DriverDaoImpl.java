@@ -53,8 +53,7 @@ public class DriverDaoImpl implements DriverDao {
 
         // Check duplicate vehicle number
         if (driverRepository.existsByVehicleNumber(dto.vehicleNumber())) {
-            throw new AlreadyExistsException(
-                    "Vehicle number already exists");
+            throw new AlreadyExistsException("Vehicle number already exists");
         }
 
         Driver driver = driverMapper.toEntity(dto);

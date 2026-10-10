@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +55,14 @@ public class RideDaoImpl implements RideDao {
         Ride savedRide = rideRepository.save(ride);
 
         return rideMapper.toResponse(savedRide);
+    }
+
+    @Override
+    public List<RideResponseDto> getRequestedRides() {
+        return rideRepository.findByStatus(RideStatus.REQUESTED)
+                .stream()
+                .map(rideMapper::toResponse)
+                .toList();
     }
 
     private void validateCoordinates(RideRequestDto dto) {

@@ -51,8 +51,7 @@ public class Driver {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private DriverVerificationStatus verificationStatus =
-            DriverVerificationStatus.PENDING;
+    private DriverVerificationStatus verificationStatus = DriverVerificationStatus.PENDING;
 
     @Column(nullable = false)
     private Boolean active = false;
