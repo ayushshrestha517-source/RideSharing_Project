@@ -47,6 +47,11 @@ public class GlobalExceptionHandler implements AuthenticationEntryPoint, AccessD
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
     }
 
+    @ExceptionHandler(RunTimeException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRunTime(RunTimeException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(HttpStatus.CONFLICT.value(), ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidation(MethodArgumentNotValidException ex) {
 
