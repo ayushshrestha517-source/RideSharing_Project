@@ -42,5 +42,11 @@ public class RideController {
     public ResponseEntity<ApiResponse<RideResponseDto>> cancelRide(@PathVariable Long rideId) {
         return ResponseEntity.ok(ApiResponse.success(rideDao.cancelRide(rideId),"Ride cancelled successfully."));
     }
+
+    @PreAuthorize("hasRole('PASSENGER')")
+    @GetMapping("/my-rides")
+    public ResponseEntity<ApiResponse<List<RideResponseDto>>> getMyRides() {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.getMyRides(), "Your rides retrieved successfully."));
+    }
 }
 

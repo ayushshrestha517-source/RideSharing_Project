@@ -10,6 +10,7 @@ import org.example.ridesharingproject.entity.Users;
 import org.example.ridesharingproject.enums.DriverVerificationStatus;
 import org.example.ridesharingproject.enums.RideStatus;
 import org.example.ridesharingproject.exception.BadRequestException;
+import org.example.ridesharingproject.exception.ForbiddenException;
 import org.example.ridesharingproject.exception.ResourceNotFoundException;
 import org.example.ridesharingproject.exception.RunTimeException;
 import org.example.ridesharingproject.mapper.RideMapper;
@@ -115,7 +116,7 @@ public class RideDaoImpl implements RideDao {
         Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
 
         if (!ride.getPassenger().getId().equals(passenger.getId())) {
-            throw new RunTimeException("You can only cancel your own rides");
+            throw new ForbiddenException("You can only cancel your own rides");
         }
 
         if (ride.getStatus() != RideStatus.REQUESTED) {
