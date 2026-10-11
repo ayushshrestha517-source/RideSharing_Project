@@ -86,9 +86,7 @@ public class UsersDaoImpl implements UsersDao {
                 )
         );
 
-        Users users = usersRepository
-                .findByUsername(loginRequestDto.username())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Users users = usersRepository.findByUsername(loginRequestDto.username()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Set<String> roles = users.getRoles()
                 .stream()
