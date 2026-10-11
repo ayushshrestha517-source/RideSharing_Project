@@ -99,6 +99,35 @@ public class RideDaoImpl implements RideDao {
         return rideMapper.toResponse(savedRide);
     }
 
+    @Override
+    @Transactional
+    public RideResponseDto cancelRide(Long rideId) {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Passenger passenger = passengerRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Passenger profile not found"));
+
+        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new RuntimeException("Ride not found"));
+
+        if (!ride.getPassenger().getId().equals(passenger.getId())) {
+            throw new RuntimeException("You can only cancel your own rides");
+        }
+
+        if (ride.getStatus() != RideStatus.REQUESTED) {
+            throw new RuntimeException("Only requested rides can be cancelled");
+        }
+
+        ride.setStatus(RideStatus.CANCELLED);
+
+        Ride savedRide = rideRepository.save(ride);
+
+        return rideMapper.toResponse(savedRide);
+    }
+
     private void validateCoordinates(RideRequestDto dto) {
 
         if (dto.pickupLatitude() < -90 || dto.pickupLatitude() > 90) {
