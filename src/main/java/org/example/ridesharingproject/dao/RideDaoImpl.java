@@ -78,18 +78,18 @@ public class RideDaoImpl implements RideDao {
                 .getAuthentication()
                 .getName();
 
-        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Driver profile not found"));
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
 
         if (!driver.getActive() || !driver.getOnline() || driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
-            throw new RuntimeException("Only approved, active, online drivers can accept rides");
+            throw new RunTimeException("Only approved, active, online drivers can accept rides");
         }
 
-        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new RuntimeException("Ride not found"));
+        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
 
         if (ride.getStatus() != RideStatus.REQUESTED) {
-            throw new RuntimeException("This ride is no longer available");
+            throw new RunTimeException("This ride is no longer available");
         }
 
         ride.setDriver(driver);
@@ -108,11 +108,11 @@ public class RideDaoImpl implements RideDao {
                 .getAuthentication()
                 .getName();
 
-        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Passenger passenger = passengerRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Passenger profile not found"));
+        Passenger passenger = passengerRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Passenger profile not found"));
 
-        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new RuntimeException("Ride not found"));
+        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
 
         if (!ride.getPassenger().getId().equals(passenger.getId())) {
             throw new RunTimeException("You can only cancel your own rides");
@@ -127,6 +127,23 @@ public class RideDaoImpl implements RideDao {
         Ride savedRide = rideRepository.save(ride);
 
         return rideMapper.toResponse(savedRide);
+    }
+
+    @Override
+    public List<RideResponseDto> getMyRides() {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Passenger passenger = passengerRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Passenger profile not found"));
+
+        return rideRepository.findByPassengerId(passenger.getId())
+                .stream()
+                .map(rideMapper::toResponse)
+                .toList();
     }
 
     private void validateCoordinates(RideRequestDto dto) {
