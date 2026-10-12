@@ -50,7 +50,7 @@ public class RideController {
     }
 
     @PreAuthorize("hasRole('DRIVER')")
-    @PutMapping("/start/{rideId}")
+    @PatchMapping("/start/{rideId}")
     public ResponseEntity<ApiResponse<RideResponseDto>> startRide(@PathVariable Long rideId) {
         return ResponseEntity.ok(ApiResponse.success(rideDao.startRide(rideId), "Ride started successfully."));
     }
