@@ -55,4 +55,10 @@ public class RideController {
         return ResponseEntity.ok(ApiResponse.success(rideDao.startRide(rideId), "Ride started successfully."));
     }
 
+    @PreAuthorize("hasRole('DRIVER')")
+    @PatchMapping("/complete/{rideId}")
+    public ResponseEntity<ApiResponse<RideResponseDto>> completeRide(@PathVariable Long rideId) {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.completeRide(rideId), "Ride completed successfully."));
+    }
+
 }
