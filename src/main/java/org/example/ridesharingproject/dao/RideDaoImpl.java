@@ -147,6 +147,40 @@ public class RideDaoImpl implements RideDao {
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public RideResponseDto startRide(Long rideId) {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
+
+        if (!Boolean.TRUE.equals(driver.getActive()) || !Boolean.TRUE.equals(driver.getOnline()) || driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
+            throw new RunTimeException("Only approved, active, online drivers can start rides");
+        }
+
+        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
+
+        if (ride.getDriver() == null || !ride.getDriver().getId().equals(driver.getId())) {
+            throw new ForbiddenException("You can only start rides assigned to you");
+        }
+
+        if (ride.getStatus() != RideStatus.ACCEPTED) {
+            throw new RunTimeException("Only accepted rides can be started");
+        }
+
+        ride.setStatus(RideStatus.IN_PROGRESS);
+        ride.setStartedAt(java.time.LocalDateTime.now());
+
+        Ride savedRide = rideRepository.save(ride);
+
+        return rideMapper.toResponse(savedRide);
+    }
+
     private void validateCoordinates(RideRequestDto dto) {
 
         if (dto.pickupLatitude() < -90 || dto.pickupLatitude() > 90) {
