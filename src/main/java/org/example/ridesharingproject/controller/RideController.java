@@ -48,5 +48,12 @@ public class RideController {
     public ResponseEntity<ApiResponse<List<RideResponseDto>>> getMyRides() {
         return ResponseEntity.ok(ApiResponse.success(rideDao.getMyRides(), "Your rides retrieved successfully."));
     }
+
+    @PreAuthorize("hasRole('DRIVER')")
+    @PutMapping("/start/{rideId}")
+    public ResponseEntity<ApiResponse<RideResponseDto>> startRide(@PathVariable Long rideId) {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.startRide(rideId), "Ride started successfully."));
+    }
+
 }
 
