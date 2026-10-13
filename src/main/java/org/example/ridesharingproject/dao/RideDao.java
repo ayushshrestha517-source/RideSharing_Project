@@ -10,7 +10,6 @@ import java.util.List;
 public interface RideDao {
     RideResponseDto requestRide(RideRequestDto dto);
     List<RideResponseDto> getRequestedRides();
-    RideResponseDto acceptRide(Long rideId);
     RideResponseDto cancelRide(Long rideId);
     List<RideResponseDto> getMyRides();
     RideResponseDto startRide(Long rideId);
