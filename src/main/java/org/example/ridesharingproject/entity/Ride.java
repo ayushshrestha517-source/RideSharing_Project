@@ -49,6 +49,9 @@ public class Ride {
     private BigDecimal requestedFare;
 
     @Column(precision = 10, scale = 2)
+    private BigDecimal proposedFare;
+
+    @Column(precision = 10, scale = 2)
     private BigDecimal agreedFare;
 
     @Enumerated(EnumType.STRING)
