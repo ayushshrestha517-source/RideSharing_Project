@@ -3,6 +3,7 @@ package org.example.ridesharingproject.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.ridesharingproject.dao.RideDao;
+import org.example.ridesharingproject.dto.request.FareResponseRequestDto;
 import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.ApiResponse;
@@ -66,6 +67,12 @@ public class RideController {
     @PatchMapping("/propose-fare/{rideId}")
     public ResponseEntity<ApiResponse<RideResponseDto>> proposeFare(@PathVariable Long rideId, @Valid @RequestBody ProposeFareRequestDto dto) {
         return ResponseEntity.ok(ApiResponse.success(rideDao.proposeFare(rideId, dto), "Fare proposed successfully."));
+    }
+
+    @PreAuthorize("hasRole('PASSENGER')")
+    @PatchMapping("/respond-to-fare/{rideId}")
+    public ResponseEntity<ApiResponse<RideResponseDto>> respondToFare(@PathVariable Long rideId, @Valid @RequestBody FareResponseRequestDto dto) {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.respondToFare(rideId, dto), dto.accepted() ? "Fare accepted successfully." : "Fare rejected successfully."));
     }
 
 }

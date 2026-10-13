@@ -1,6 +1,7 @@
 package org.example.ridesharingproject.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.example.ridesharingproject.dto.request.FareResponseRequestDto;
 import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
@@ -242,6 +243,51 @@ public class RideDaoImpl implements RideDao {
 
         ride.setProposedFare(dto.proposedFare());
         ride.setStatus(RideStatus.FARE_PROPOSED);
+        ride.setDriver(driver);
+
+        Ride savedRide = rideRepository.save(ride);
+
+        return rideMapper.toResponse(savedRide);
+    }
+
+    @Override
+    @Transactional
+    public RideResponseDto respondToFare(
+            Long rideId, FareResponseRequestDto dto) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Passenger passenger = passengerRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Passenger profile not found"));
+
+        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
+
+        // Ensure the ride belongs to this passenger
+        if (!ride.getPassenger().getId().equals(passenger.getId())) {
+            throw new ForbiddenException("You can only respond to fares for your own rides");
+        }
+
+        // Ensure a driver has proposed a fare
+        if (ride.getStatus() != RideStatus.FARE_PROPOSED) {
+            throw new RunTimeException("This ride does not have a pending fare proposal");
+        }
+
+        // Ensure the proposed fare exists
+        if (ride.getProposedFare() == null) {
+            throw new RunTimeException("No proposed fare found");
+        }
+
+        if (dto.accepted()) {
+            // Passenger accepts the driver's offer
+            ride.setAgreedFare(ride.getProposedFare());
+            ride.setStatus(RideStatus.ACCEPTED);
+        } else {
+            // Passenger rejects the offer
+            ride.setProposedFare(null);
+            ride.setStatus(RideStatus.REQUESTED);
+            ride.setDriver(null);
+        }
 
         Ride savedRide = rideRepository.save(ride);
 
