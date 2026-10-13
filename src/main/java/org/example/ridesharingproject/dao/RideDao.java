@@ -1,5 +1,6 @@
 package org.example.ridesharingproject.dao;
 
+import org.example.ridesharingproject.dto.request.FareResponseRequestDto;
 import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
@@ -15,4 +16,5 @@ public interface RideDao {
     RideResponseDto startRide(Long rideId);
     RideResponseDto completeRide(Long rideId);
     RideResponseDto proposeFare(Long rideId, ProposeFareRequestDto dto);
+    RideResponseDto respondToFare(Long rideId, FareResponseRequestDto dto);
 }
