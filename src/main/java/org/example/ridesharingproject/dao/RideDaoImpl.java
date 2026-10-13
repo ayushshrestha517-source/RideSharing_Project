@@ -1,6 +1,7 @@
 package org.example.ridesharingproject.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
 import org.example.ridesharingproject.entity.Driver;
@@ -209,6 +210,38 @@ public class RideDaoImpl implements RideDao {
 
         ride.setStatus(RideStatus.COMPLETED);
         ride.setCompletedAt(java.time.LocalDateTime.now());
+
+        Ride savedRide = rideRepository.save(ride);
+
+        return rideMapper.toResponse(savedRide);
+    }
+
+    @Override
+    @Transactional
+    public RideResponseDto proposeFare(Long rideId, ProposeFareRequestDto dto) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
+
+        if (!driver.getActive() || !driver.getOnline() || driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
+            throw new RunTimeException("Only approved, active, online drivers can propose fares");
+        }
+
+        if (dto.proposedFare() == null || dto.proposedFare().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadRequestException("Proposed fare must be greater than zero");
+        }
+
+        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
+
+        if (ride.getStatus() != RideStatus.REQUESTED) {
+            throw new RunTimeException("A fare can only be proposed for a requested ride");
+        }
+
+        ride.setProposedFare(dto.proposedFare());
+        ride.setStatus(RideStatus.FARE_PROPOSED);
 
         Ride savedRide = rideRepository.save(ride);
 
