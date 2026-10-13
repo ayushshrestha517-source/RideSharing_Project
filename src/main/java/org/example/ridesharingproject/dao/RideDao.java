@@ -13,4 +13,5 @@ public interface RideDao {
     List<RideResponseDto> getMyRides();
     RideResponseDto startRide(Long rideId);
     RideResponseDto completeRide(Long rideId);
+
 }
