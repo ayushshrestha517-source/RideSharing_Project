@@ -16,9 +16,11 @@ public record RideResponseDto(
         Double destinationLatitude,
         Double destinationLongitude,
         BigDecimal requestedFare,
+        BigDecimal proposedFare,
         BigDecimal agreedFare,
         RideStatus status,
         LocalDateTime createdAt,
         LocalDateTime startedAt,
         LocalDateTime completedAt
-) {}
+) {
+}
