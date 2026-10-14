@@ -91,14 +91,15 @@ public class RideDaoImpl implements RideDao {
             throw new ForbiddenException("You can only cancel your own rides");
         }
 
-        if (ride.getStatus() != RideStatus.REQUESTED) {
-            throw new RunTimeException("Only requested rides can be cancelled");
+        if (ride.getStatus() != RideStatus.REQUESTED && ride.getStatus() != RideStatus.FARE_PROPOSED) {
+            throw new RunTimeException("Only requested rides or rides with pending fare offers can be cancelled");
         }
 
         ride.setStatus(RideStatus.CANCELLED);
+        ride.setProposedFare(null);
+        ride.setDriver(null);
 
         Ride savedRide = rideRepository.save(ride);
-
         return rideMapper.toResponse(savedRide);
     }
 
@@ -207,8 +208,8 @@ public class RideDaoImpl implements RideDao {
 
         Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
 
-        if (ride.getStatus() != RideStatus.REQUESTED) {
-            throw new RunTimeException("A fare can only be proposed for a requested ride");
+        if (ride.getStatus() != RideStatus.REQUESTED || ride.getDriver() != null) {
+            throw new RunTimeException("This ride is no longer available for a fare proposal");
         }
 
         ride.setProposedFare(dto.proposedFare());
