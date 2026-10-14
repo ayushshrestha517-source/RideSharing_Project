@@ -19,4 +19,5 @@ public interface RideDao {
     RideResponseDto respondToFare(Long rideId, FareResponseRequestDto dto);
     List<RideResponseDto> getMyDriverRides();
     List<RideResponseDto> getMyRidesByStatus(RideStatus status);
+    List<RideResponseDto> getMyDriverRidesByStatus(RideStatus status);
 }

@@ -305,6 +305,22 @@ public class RideDaoImpl implements RideDao {
                 .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<RideResponseDto> getMyDriverRidesByStatus(RideStatus status) {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
+
+        return rideRepository.findByDriverIdAndStatus(driver.getId(), status)
+                .stream()
+                .map(rideMapper::toResponse)
+                .toList();
+    }
     private void validateCoordinates(RideRequestDto dto) {
 
         if (dto.pickupLatitude() < -90 || dto.pickupLatitude() > 90) {
