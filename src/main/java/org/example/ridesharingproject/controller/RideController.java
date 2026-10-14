@@ -8,6 +8,7 @@ import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.ApiResponse;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
+import org.example.ridesharingproject.enums.RideStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -73,5 +74,11 @@ public class RideController {
     @GetMapping("/my-driver-rides")
     public ResponseEntity<ApiResponse<List<RideResponseDto>>> getMyDriverRides() {
         return ResponseEntity.ok(ApiResponse.success(rideDao.getMyDriverRides(), "Driver rides retrieved successfully."));
+    }
+
+    @PreAuthorize("hasRole('PASSENGER')")
+    @GetMapping("/my-rides/status")
+    public ResponseEntity<ApiResponse<List<RideResponseDto>>> getMyRidesByStatus(@RequestParam RideStatus status) {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.getMyRidesByStatus(status),"Passenger rides retrieved successfully."));
     }
 }
