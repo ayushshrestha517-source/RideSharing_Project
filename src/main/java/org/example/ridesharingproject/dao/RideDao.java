@@ -4,6 +4,7 @@ import org.example.ridesharingproject.dto.request.FareResponseRequestDto;
 import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
+import org.example.ridesharingproject.enums.RideStatus;
 
 import java.util.List;
 
@@ -17,4 +18,5 @@ public interface RideDao {
     RideResponseDto proposeFare(Long rideId, ProposeFareRequestDto dto);
     RideResponseDto respondToFare(Long rideId, FareResponseRequestDto dto);
     List<RideResponseDto> getMyDriverRides();
+    List<RideResponseDto> getMyRidesByStatus(RideStatus status);
 }
