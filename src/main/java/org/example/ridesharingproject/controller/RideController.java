@@ -69,4 +69,9 @@ public class RideController {
         return ResponseEntity.ok(ApiResponse.success(rideDao.respondToFare(rideId, dto), dto.accepted() ? "Fare accepted successfully." : "Fare rejected successfully."));
     }
 
+    @PreAuthorize("hasRole('DRIVER')")
+    @GetMapping("/my-driver-rides")
+    public ResponseEntity<ApiResponse<List<RideResponseDto>>> getMyDriverRides() {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.getMyDriverRides(), "Driver rides retrieved successfully."));
+    }
 }

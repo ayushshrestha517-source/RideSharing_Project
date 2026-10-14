@@ -222,8 +222,7 @@ public class RideDaoImpl implements RideDao {
 
     @Override
     @Transactional
-    public RideResponseDto respondToFare(
-            Long rideId, FareResponseRequestDto dto) {
+    public RideResponseDto respondToFare(Long rideId, FareResponseRequestDto dto) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -248,9 +247,13 @@ public class RideDaoImpl implements RideDao {
             throw new RunTimeException("No proposed fare found");
         }
 
+        if (ride.getDriver() == null) {
+            throw new RunTimeException("No driver is assigned to this fare proposal");
+        }
         if (dto.accepted()) {
             // Passenger accepts the driver's offer
             ride.setAgreedFare(ride.getProposedFare());
+            ride.setProposedFare(null);
             ride.setStatus(RideStatus.ACCEPTED);
         } else {
             // Passenger rejects the offer
@@ -262,6 +265,22 @@ public class RideDaoImpl implements RideDao {
         Ride savedRide = rideRepository.save(ride);
 
         return rideMapper.toResponse(savedRide);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RideResponseDto> getMyDriverRides() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
+
+        return rideRepository.findByDriverId(driver.getId())
+                .stream()
+                .map(rideMapper::toResponse)
+                .toList();
     }
 
     private void validateCoordinates(RideRequestDto dto) {
