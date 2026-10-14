@@ -84,13 +84,7 @@ public class RideController {
 
     @PreAuthorize("hasRole('DRIVER')")
     @GetMapping("/my-driver-rides/status")
-    public ResponseEntity<ApiResponse<List<RideResponseDto>>> getMyDriverRidesByStatus(
-            @RequestParam RideStatus status) {
-
-        List<RideResponseDto> rides = rideDao.getMyDriverRidesByStatus(status);
-
-        return ResponseEntity.ok(
-                ApiResponse.success(rides, "Driver rides retrieved successfully.")
-        );
+    public ResponseEntity<ApiResponse<List<RideResponseDto>>> getMyDriverRidesByStatus(@RequestParam RideStatus status) {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.getMyDriverRidesByStatus(status), "Driver rides retrieved successfully."));
     }
 }
