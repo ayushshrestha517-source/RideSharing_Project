@@ -146,6 +146,10 @@ public class RideDaoImpl implements RideDao {
             throw new RunTimeException("Only accepted rides can be started");
         }
 
+        if (ride.getAgreedFare() == null || ride.getAgreedFare().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RunTimeException("Cannot start a ride without a valid agreed fare");
+        }
+
         ride.setStatus(RideStatus.IN_PROGRESS);
         ride.setStartedAt(java.time.LocalDateTime.now());
 
