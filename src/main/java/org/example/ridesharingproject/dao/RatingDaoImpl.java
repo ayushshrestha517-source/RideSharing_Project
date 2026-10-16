@@ -2,6 +2,7 @@ package org.example.ridesharingproject.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.example.ridesharingproject.dto.request.RatingRequestDto;
+import org.example.ridesharingproject.dto.response.DriverRatingSummaryResponseDto;
 import org.example.ridesharingproject.dto.response.RatingResponseDto;
 import org.example.ridesharingproject.entity.*;
 import org.example.ridesharingproject.enums.RideStatus;
@@ -98,5 +99,24 @@ public class RatingDaoImpl implements RatingDao {
         Double averageRating = ratingRepository.findAverageRatingByDriverId(driver.getId());
 
         return averageRating != null ? Math.round(averageRating * 100.0) / 100.0 : 0.0;
+    }
+
+    @Override
+    public DriverRatingSummaryResponseDto getMyRatingSummary() {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
+
+        Double averageRating = ratingRepository.findAverageRatingByDriverId(driver.getId());
+
+        long totalRatings = ratingRepository.countByDriverId(driver.getId());
+
+        double average = averageRating != null ? Math.round(averageRating * 100.0) / 100.0 : 0.0;
+
+        return new DriverRatingSummaryResponseDto(average, totalRatings);
     }
 }
