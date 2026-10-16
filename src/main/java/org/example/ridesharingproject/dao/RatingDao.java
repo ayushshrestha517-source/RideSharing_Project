@@ -11,4 +11,5 @@ public interface RatingDao {
 
     List<RatingResponseDto> getDriverRatings();
 
+    Double getMyAverageRating();
 }

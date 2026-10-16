@@ -83,4 +83,20 @@ public class RatingDaoImpl implements RatingDao {
                 .map(ratingMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Double getMyAverageRating() {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
+
+        Double averageRating = ratingRepository.findAverageRatingByDriverId(driver.getId());
+
+        return averageRating != null ? Math.round(averageRating * 100.0) / 100.0 : 0.0;
+    }
 }
