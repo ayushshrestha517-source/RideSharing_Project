@@ -30,4 +30,10 @@ public class RatingController {
     public ResponseEntity<ApiResponse<List<RatingResponseDto>>> getDriverRatings() {
         return ResponseEntity.ok(ApiResponse.success(ratingDao.getDriverRatings(), "Driver ratings retrieved successfully."));
     }
+
+    @PreAuthorize("hasRole('DRIVER')")
+    @GetMapping("/driver/me/average")
+    public ResponseEntity<ApiResponse<Double>> getMyAverageRating() {
+        return ResponseEntity.ok(ApiResponse.success(ratingDao.getMyAverageRating(), "Driver average rating retrieved successfully."));
+    }
 }
