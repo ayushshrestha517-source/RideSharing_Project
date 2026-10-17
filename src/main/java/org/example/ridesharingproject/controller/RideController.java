@@ -7,6 +7,7 @@ import org.example.ridesharingproject.dto.request.FareResponseRequestDto;
 import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
 import org.example.ridesharingproject.dto.response.ApiResponse;
+import org.example.ridesharingproject.dto.response.DriverEarningsResponseDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
 import org.example.ridesharingproject.enums.RideStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,5 +87,11 @@ public class RideController {
     @GetMapping("/my-driver-rides/status")
     public ResponseEntity<ApiResponse<List<RideResponseDto>>> getMyDriverRidesByStatus(@RequestParam RideStatus status) {
         return ResponseEntity.ok(ApiResponse.success(rideDao.getMyDriverRidesByStatus(status), "Driver rides retrieved successfully."));
+    }
+
+    @GetMapping("/my-earnings")
+    @PreAuthorize("hasRole('DRIVER')")
+    public ResponseEntity<ApiResponse<DriverEarningsResponseDto>> getMyEarnings() {
+        return ResponseEntity.ok(ApiResponse.success(rideDao.getMyEarnings(), "Driver earnings retrieved successfully"));
     }
 }
