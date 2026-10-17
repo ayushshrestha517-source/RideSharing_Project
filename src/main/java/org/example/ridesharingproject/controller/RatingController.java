@@ -44,4 +44,10 @@ public class RatingController {
         return ResponseEntity.ok(ApiResponse.success(ratingDao.getMyRatingSummary(),"Driver rating summary retrieved successfully."));
     }
 
+    @PreAuthorize("hasRole('PASSENGER')")
+    @GetMapping("/driver/summary/{driverId}")
+    public ResponseEntity<ApiResponse<DriverRatingSummaryResponseDto>> getDriverRatingSummary(@PathVariable Long driverId) {
+        return ResponseEntity.ok(ApiResponse.success(ratingDao.getDriverRatingSummary(driverId),"Driver rating summary retrieved successfully."));
+    }
+
 }

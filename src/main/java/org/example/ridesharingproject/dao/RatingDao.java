@@ -15,4 +15,6 @@ public interface RatingDao {
     Double getMyAverageRating();
 
     DriverRatingSummaryResponseDto getMyRatingSummary();
+
+    DriverRatingSummaryResponseDto getDriverRatingSummary(Long driverId);
 }
