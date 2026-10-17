@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.ridesharingproject.dto.request.FareResponseRequestDto;
 import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
+import org.example.ridesharingproject.dto.response.DriverEarningsResponseDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
 import org.example.ridesharingproject.entity.Driver;
 import org.example.ridesharingproject.entity.Passenger;
@@ -321,6 +322,39 @@ public class RideDaoImpl implements RideDao {
                 .map(rideMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DriverEarningsResponseDto getMyEarnings() {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
+
+        List<Ride> completedRides = rideRepository.findByDriverIdAndStatus(driver.getId(),RideStatus.COMPLETED);
+
+        BigDecimal totalEarnings = completedRides.stream()
+                .map(Ride::getAgreedFare)
+                .filter(java.util.Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        long completedRideCount = completedRides.size();
+
+        BigDecimal averageEarnings = completedRideCount == 0
+                ? BigDecimal.ZERO
+                : totalEarnings.divide(
+                BigDecimal.valueOf(completedRideCount),
+                2,
+                java.math.RoundingMode.HALF_UP
+        );
+
+        return new DriverEarningsResponseDto(totalEarnings, completedRideCount, averageEarnings);
+    }
+
     private void validateCoordinates(RideRequestDto dto) {
 
         if (dto.pickupLatitude() < -90 || dto.pickupLatitude() > 90) {

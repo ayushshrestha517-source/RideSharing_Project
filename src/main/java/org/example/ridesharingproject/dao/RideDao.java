@@ -3,6 +3,7 @@ package org.example.ridesharingproject.dao;
 import org.example.ridesharingproject.dto.request.FareResponseRequestDto;
 import org.example.ridesharingproject.dto.request.ProposeFareRequestDto;
 import org.example.ridesharingproject.dto.request.RideRequestDto;
+import org.example.ridesharingproject.dto.response.DriverEarningsResponseDto;
 import org.example.ridesharingproject.dto.response.RideResponseDto;
 import org.example.ridesharingproject.enums.RideStatus;
 
@@ -20,4 +21,5 @@ public interface RideDao {
     List<RideResponseDto> getMyDriverRides();
     List<RideResponseDto> getMyRidesByStatus(RideStatus status);
     List<RideResponseDto> getMyDriverRidesByStatus(RideStatus status);
+    DriverEarningsResponseDto getMyEarnings();
 }
