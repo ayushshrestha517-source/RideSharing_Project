@@ -119,4 +119,18 @@ public class RatingDaoImpl implements RatingDao {
 
         return new DriverRatingSummaryResponseDto(average, totalRatings);
     }
+
+    @Override
+    public DriverRatingSummaryResponseDto getDriverRatingSummary(Long driverId) {
+
+        Driver driver = driverRepository.findById(driverId).orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+
+        Double averageRating = ratingRepository.findAverageRatingByDriverId(driver.getId());
+
+        long totalRatings = ratingRepository.countByDriverId(driver.getId());
+
+        double average = averageRating != null ? Math.round(averageRating * 100.0) / 100.0 : 0.0;
+
+        return new DriverRatingSummaryResponseDto(average, totalRatings);
+    }
 }
