@@ -19,4 +19,6 @@ public interface RatingDao {
     DriverRatingSummaryResponseDto getDriverRatingSummary(Long driverId);
 
     List<RatingResponseDto> getDriverRatings(Long driverId);
+
+    List<RatingResponseDto> getMySubmittedRatings();
 }
