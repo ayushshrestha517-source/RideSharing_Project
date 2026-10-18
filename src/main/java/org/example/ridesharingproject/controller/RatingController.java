@@ -55,4 +55,10 @@ public class RatingController {
     public ResponseEntity<ApiResponse<List<RatingResponseDto>>> getDriverRatings(@PathVariable Long driverId) {
         return ResponseEntity.ok(ApiResponse.success(ratingDao.getDriverRatings(driverId),"Driver ratings retrieved successfully."));
     }
+
+    @PreAuthorize("hasRole('PASSENGER')")
+    @GetMapping("/my-submitted")
+    public ResponseEntity<ApiResponse<List<RatingResponseDto>>> getMySubmittedRatings() {
+        return ResponseEntity.ok(ApiResponse.success(ratingDao.getMySubmittedRatings(),"Your submitted ratings retrieved successfully."));
+    }
 }
