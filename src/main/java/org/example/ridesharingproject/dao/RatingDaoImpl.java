@@ -133,4 +133,14 @@ public class RatingDaoImpl implements RatingDao {
 
         return new DriverRatingSummaryResponseDto(average, totalRatings);
     }
+
+    @Override
+    public List<RatingResponseDto> getDriverRatings(Long driverId) {
+        Driver driver = driverRepository.findById(driverId).orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+
+        return ratingRepository.findByDriverId(driver.getId())
+                .stream()
+                .map(ratingMapper::toResponse)
+                .toList();
+    }
 }
