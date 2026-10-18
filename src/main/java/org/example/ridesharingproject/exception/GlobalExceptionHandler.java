@@ -108,6 +108,14 @@ public class GlobalExceptionHandler implements AuthenticationEntryPoint, AccessD
         );
     }
 
-
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                ApiResponse.error(
+                        HttpStatus.FORBIDDEN.value(),
+                        "Access Denied - Insufficient permissions"
+                )
+        );
+    }
 }
 

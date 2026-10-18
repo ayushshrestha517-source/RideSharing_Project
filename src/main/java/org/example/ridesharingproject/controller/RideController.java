@@ -89,8 +89,8 @@ public class RideController {
         return ResponseEntity.ok(ApiResponse.success(rideDao.getMyDriverRidesByStatus(status), "Driver rides retrieved successfully."));
     }
 
-    @GetMapping("/my-earnings")
     @PreAuthorize("hasRole('DRIVER')")
+    @GetMapping("/my-earnings")
     public ResponseEntity<ApiResponse<DriverEarningsResponseDto>> getMyEarnings() {
         return ResponseEntity.ok(ApiResponse.success(rideDao.getMyEarnings(), "Driver earnings retrieved successfully"));
     }
