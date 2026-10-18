@@ -143,4 +143,22 @@ public class RatingDaoImpl implements RatingDao {
                 .map(ratingMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public List<RatingResponseDto> getMySubmittedRatings() {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Passenger passenger = passengerRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Passenger profile not found"));
+
+
+        return ratingRepository.findByPassengerId(passenger.getId())
+                .stream()
+                .map(ratingMapper::toResponse)
+                .toList();
+    }
 }
