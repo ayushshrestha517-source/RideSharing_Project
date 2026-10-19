@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.ridesharingproject.dao.UsersDao;
 import org.example.ridesharingproject.dto.request.LoginRequestDto;
+import org.example.ridesharingproject.dto.request.ResetPasswordRequestDto;
 import org.example.ridesharingproject.dto.request.SelectRoleRequestDto;
 import org.example.ridesharingproject.dto.request.SignupRequestDto;
 import org.example.ridesharingproject.dto.response.ApiResponse;
@@ -28,6 +29,12 @@ public class RegisterController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         return ResponseEntity.ok(ApiResponse.success(usersDao.login(loginRequestDto),"User logged in successfully"));
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequestDto dto) {
+        usersDao.resetPassword(dto);
+        return ResponseEntity.ok(ApiResponse.success(null, "Password reset successfully."));
     }
 
     @PutMapping("/select-role")
