@@ -13,6 +13,7 @@ import org.example.ridesharingproject.repository.UsersRepository;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -39,6 +40,7 @@ public class EmailOtpDaoImpl implements EmailOtpDao{
     }
 
     @Override
+    @Transactional
     public EmailOtpResponseDto verifyOtp(VerifyOtpRequestDto dto) {
         Users user = usersRepository.findByEmail(dto.email()).orElseThrow(() -> new ResourceNotFoundException("Email does not exist"));
         EmailOtp emailOtp = emailOtpRepository.findTopByEmailOrderByCreatedAtDesc(dto.email()).orElseThrow(() -> new OtpException("OTP not found"));

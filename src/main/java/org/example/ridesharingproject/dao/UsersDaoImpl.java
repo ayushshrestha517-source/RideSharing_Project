@@ -2,19 +2,23 @@ package org.example.ridesharingproject.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.example.ridesharingproject.dto.request.LoginRequestDto;
+import org.example.ridesharingproject.dto.request.ResetPasswordRequestDto;
 import org.example.ridesharingproject.dto.request.SelectRoleRequestDto;
 import org.example.ridesharingproject.dto.request.SignupRequestDto;
 import org.example.ridesharingproject.dto.response.LoginResponseDto;
 import org.example.ridesharingproject.dto.response.SelectRoleResponseDto;
 import org.example.ridesharingproject.dto.response.SignupResponseDto;
+import org.example.ridesharingproject.entity.EmailOtp;
 import org.example.ridesharingproject.entity.Passenger;
 import org.example.ridesharingproject.entity.Role;
 import org.example.ridesharingproject.entity.Users;
 import org.example.ridesharingproject.enums.UserRole;
 import org.example.ridesharingproject.exception.AlreadyExistsException;
 import org.example.ridesharingproject.exception.BadRequestException;
+import org.example.ridesharingproject.exception.OtpException;
 import org.example.ridesharingproject.exception.ResourceNotFoundException;
 import org.example.ridesharingproject.mapper.UsersMapper;
+import org.example.ridesharingproject.repository.EmailOtpRepository;
 import org.example.ridesharingproject.repository.PassengerRepository;
 import org.example.ridesharingproject.repository.RoleRepository;
 import org.example.ridesharingproject.repository.UsersRepository;
@@ -25,7 +29,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +44,7 @@ public class UsersDaoImpl implements UsersDao {
     private final UsersMapper usersMapper;
     private final RoleRepository roleRepository;
     private final PassengerRepository passengerRepository;
+    private final EmailOtpRepository emailOtpRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -130,5 +137,30 @@ public class UsersDaoImpl implements UsersDao {
 
         throw new BadRequestException("Invalid role selection.");
 
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(ResetPasswordRequestDto dto) {
+        Users user = usersRepository.findByEmail(dto.email()).orElseThrow(() -> new ResourceNotFoundException("Email does not exist"));
+
+        EmailOtp emailOtp = emailOtpRepository.findTopByEmailOrderByCreatedAtDesc(dto.email()).orElseThrow(() -> new OtpException("OTP not found"));
+
+        if (!emailOtp.isVerified()) {
+            throw new OtpException("OTP has not been verified");
+        }
+
+        if (!emailOtp.getOtp().equals(dto.otp())) {
+            throw new OtpException("Invalid OTP");
+        }
+
+        if (!emailOtp.getExpiresAt().isAfter(LocalDateTime.now())) {
+            throw new OtpException("OTP has expired");
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
+        usersRepository.save(user);
+
+        emailOtpRepository.delete(emailOtp);
     }
 }
