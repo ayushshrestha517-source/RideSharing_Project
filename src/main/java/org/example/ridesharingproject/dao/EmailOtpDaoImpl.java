@@ -58,6 +58,12 @@ public class EmailOtpDaoImpl implements EmailOtpDao{
         return new EmailOtpResponseDto(dto.email());
     }
 
+    @Override
+    @Transactional
+    public void cleanupExpiredOtps(LocalDateTime now) {
+        emailOtpRepository.deleteByExpiresAtLessThanEqual(now);
+    }
+
     private void sendEmail(String email, String otp) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
