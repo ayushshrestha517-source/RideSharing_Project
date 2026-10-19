@@ -1,10 +1,7 @@
 package org.example.ridesharingproject.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.example.ridesharingproject.dto.request.LoginRequestDto;
-import org.example.ridesharingproject.dto.request.ResetPasswordRequestDto;
-import org.example.ridesharingproject.dto.request.SelectRoleRequestDto;
-import org.example.ridesharingproject.dto.request.SignupRequestDto;
+import org.example.ridesharingproject.dto.request.*;
 import org.example.ridesharingproject.dto.response.LoginResponseDto;
 import org.example.ridesharingproject.dto.response.SelectRoleResponseDto;
 import org.example.ridesharingproject.dto.response.SignupResponseDto;
@@ -162,5 +159,26 @@ public class UsersDaoImpl implements UsersDao {
         usersRepository.save(user);
 
         emailOtpRepository.delete(emailOtp);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordRequestDto dto) {
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
+            throw new BadRequestException("Current password is incorrect");
+        }
+
+        if (passwordEncoder.matches(dto.newPassword(), user.getPassword())) {
+            throw new BadRequestException("New password must be different from the current password");
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
+        usersRepository.save(user);
     }
 }
