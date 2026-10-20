@@ -194,7 +194,7 @@ public class DriverDaoImpl implements DriverDao {
             throw new BadRequestException("Driver account is not active");
         }
 
-        if (driver.getLicenseExpiryDate().isBefore(LocalDate.now())) {
+        if (!driver.getLicenseExpiryDate().isAfter(LocalDate.now())) {
             throw new BadRequestException("Your driving license has expired");
         }
 
