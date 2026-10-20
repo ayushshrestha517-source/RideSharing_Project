@@ -6,9 +6,9 @@ import org.example.ridesharingproject.dto.response.DriverRatingSummaryResponseDt
 import org.example.ridesharingproject.dto.response.RatingResponseDto;
 import org.example.ridesharingproject.entity.*;
 import org.example.ridesharingproject.enums.RideStatus;
+import org.example.ridesharingproject.exception.BadRequestException;
 import org.example.ridesharingproject.exception.ForbiddenException;
 import org.example.ridesharingproject.exception.ResourceNotFoundException;
-import org.example.ridesharingproject.exception.RunTimeException;
 import org.example.ridesharingproject.mapper.RatingMapper;
 import org.example.ridesharingproject.repository.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,15 +46,15 @@ public class RatingDaoImpl implements RatingDao {
         }
 
         if (ride.getStatus() != RideStatus.COMPLETED) {
-            throw new RunTimeException("You can only rate a completed ride");
+            throw new BadRequestException("You can only rate a completed ride");
         }
 
         if (ride.getDriver() == null) {
-            throw new RunTimeException("Cannot rate a ride without an assigned driver");
+            throw new BadRequestException("Cannot rate a ride without an assigned driver");
         }
 
         if (ratingRepository.existsByRideId(rideId)) {
-            throw new RunTimeException("This ride has already been rated");
+            throw new BadRequestException("This ride has already been rated");
         }
 
         Rating rating = ratingMapper.toEntity(dto);

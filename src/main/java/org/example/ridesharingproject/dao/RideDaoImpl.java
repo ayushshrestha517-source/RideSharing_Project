@@ -221,6 +221,10 @@ public class RideDaoImpl implements RideDao {
             throw new RunTimeException("This ride is no longer available for a fare proposal");
         }
 
+        if (rideRepository.existsByDriverIdAndStatus(driver.getId(), RideStatus.IN_PROGRESS)) {
+            throw new BadRequestException("You cannot propose a fare while a ride is in progress");
+        }
+
         ride.setProposedFare(dto.proposedFare());
         ride.setStatus(RideStatus.FARE_PROPOSED);
         ride.setDriver(driver);
