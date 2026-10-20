@@ -17,4 +17,6 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     List<Ride> findByPassengerIdAndStatus(Long passengerId, RideStatus status);
 
     List<Ride> findByDriverIdAndStatus(Long driverId, RideStatus status);
+
+    boolean existsByDriverIdAndStatus(Long driverId, RideStatus status);
 }

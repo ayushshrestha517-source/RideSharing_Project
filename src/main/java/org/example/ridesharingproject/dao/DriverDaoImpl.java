@@ -7,11 +7,13 @@ import org.example.ridesharingproject.dto.response.DriverResponseDto;
 import org.example.ridesharingproject.entity.Driver;
 import org.example.ridesharingproject.entity.Role;
 import org.example.ridesharingproject.entity.Users;
+import org.example.ridesharingproject.enums.RideStatus;
 import org.example.ridesharingproject.exception.AlreadyExistsException;
 import org.example.ridesharingproject.exception.BadRequestException;
 import org.example.ridesharingproject.exception.ResourceNotFoundException;
 import org.example.ridesharingproject.mapper.DriverMapper;
 import org.example.ridesharingproject.repository.DriverRepository;
+import org.example.ridesharingproject.repository.RideRepository;
 import org.example.ridesharingproject.repository.RoleRepository;
 import org.example.ridesharingproject.repository.UsersRepository;
 import org.example.ridesharingproject.enums.DriverVerificationStatus;
@@ -31,6 +33,7 @@ public class DriverDaoImpl implements DriverDao {
     private final UsersRepository usersRepository;
     private final DriverMapper driverMapper;
     private final RoleRepository roleRepository;
+    private final RideRepository rideRepository;
 
     @Override
     public DriverResponseDto applyAsDriver(DriverRequestDto dto) {
@@ -212,6 +215,10 @@ public class DriverDaoImpl implements DriverDao {
         Users user = usersRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver application not found"));
+
+        if (rideRepository.existsByDriverIdAndStatus(driver.getId(), RideStatus.IN_PROGRESS)) {
+            throw new BadRequestException("Cannot go offline while a ride is in progress");
+        }
 
         driver.setOnline(false);
 
