@@ -51,6 +51,10 @@ public class RideDaoImpl implements RideDao {
 
         Passenger passenger = passengerRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Passenger profile not found"));
 
+        if (rideRepository.existsByPassengerIdAndStatusIn(passenger.getId(), List.of(RideStatus.REQUESTED, RideStatus.FARE_PROPOSED, RideStatus.ACCEPTED, RideStatus.IN_PROGRESS))) {
+            throw new BadRequestException("You already have an active ride");
+        }
+
         validateCoordinates(dto);
         validateFare(dto.requestedFare());
 
