@@ -144,11 +144,15 @@ public class RideDaoImpl implements RideDao {
         }
 
         if (ride.getStatus() != RideStatus.ACCEPTED) {
-            throw new RunTimeException("Only accepted rides can be started");
+            throw new BadRequestException("Only accepted rides can be started");
         }
 
         if (ride.getAgreedFare() == null || ride.getAgreedFare().compareTo(BigDecimal.ZERO) <= 0) {
             throw new RunTimeException("Cannot start a ride without a valid agreed fare");
+        }
+
+        if (rideRepository.existsByDriverIdAndStatus(driver.getId(), RideStatus.IN_PROGRESS)) {
+            throw new BadRequestException("You already have a ride in progress");
         }
 
         ride.setStatus(RideStatus.IN_PROGRESS);
@@ -171,8 +175,8 @@ public class RideDaoImpl implements RideDao {
 
         Driver driver = driverRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
 
-        if (!driver.getActive() || !driver.getOnline() || driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
-            throw new RunTimeException("Only approved, active, online drivers can complete rides");
+        if (!Boolean.TRUE.equals(driver.getActive()) || driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
+            throw new BadRequestException("Only approved, active drivers can complete rides");
         }
 
         Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
@@ -182,7 +186,7 @@ public class RideDaoImpl implements RideDao {
         }
 
         if (ride.getStatus() != RideStatus.IN_PROGRESS) {
-            throw new RunTimeException("Only rides in progress can be completed");
+            throw new BadRequestException("Only rides in progress can be completed");
         }
 
         ride.setStatus(RideStatus.COMPLETED);
