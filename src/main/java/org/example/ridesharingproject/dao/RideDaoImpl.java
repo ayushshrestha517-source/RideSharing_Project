@@ -93,7 +93,7 @@ public class RideDaoImpl implements RideDao {
         }
 
         if (ride.getStatus() != RideStatus.REQUESTED && ride.getStatus() != RideStatus.FARE_PROPOSED) {
-            throw new RunTimeException("Only requested rides or rides with pending fare offers can be cancelled");
+            throw new BadRequestException("Only requested rides or rides with pending fare offers can be cancelled");
         }
 
         ride.setStatus(RideStatus.CANCELLED);
