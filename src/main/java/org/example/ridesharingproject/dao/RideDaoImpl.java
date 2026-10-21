@@ -127,6 +127,58 @@ public class RideDaoImpl implements RideDao {
 
     @Override
     @Transactional
+    public RideResponseDto acceptRide(Long rideId) {
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Users user = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Driver driver = driverRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
+
+        if (!driver.getActive()
+                || !driver.getOnline()
+                || driver.getVerificationStatus() != DriverVerificationStatus.APPROVED) {
+            throw new BadRequestException(
+                    "Only approved, active, online drivers can accept rides");
+        }
+
+        Ride ride = rideRepository.findById(rideId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
+
+        if (ride.getStatus() != RideStatus.REQUESTED || ride.getDriver() != null) {
+            throw new BadRequestException("This ride is no longer available");
+        }
+
+        if (ride.getRequestedFare() == null
+                || ride.getRequestedFare().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadRequestException("Requested fare must be greater than zero");
+        }
+
+        if (rideRepository.existsByDriverIdAndStatusIn(
+                driver.getId(),
+                List.of(
+                        RideStatus.FARE_PROPOSED,
+                        RideStatus.ACCEPTED,
+                        RideStatus.IN_PROGRESS
+                ))) {
+            throw new BadRequestException(
+                    "You already have a pending fare proposal or active ride");
+        }
+
+        ride.setDriver(driver);
+        ride.setAgreedFare(ride.getRequestedFare());
+        ride.setProposedFare(null);
+        ride.setStatus(RideStatus.ACCEPTED);
+
+        Ride savedRide = rideRepository.save(ride);
+
+        return rideMapper.toResponse(savedRide);
+    }
+
+    @Override
+    @Transactional
     public RideResponseDto startRide(Long rideId) {
 
         String username = SecurityContextHolder.getContext()
